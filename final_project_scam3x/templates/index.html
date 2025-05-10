@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Classic Models App</title>
+
+    <style>
+        table,
+        th,
+        td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 8px;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    {% extends "base.html" %}
+
+    {% block content %}
+    <h1>Classic Models Dashboard</h1>
+
+    <form method="POST" action="{{ url_for('index') }}" id="indexForm">
+        <label for="section">Choose Report Option:</label><br>
+        <select name="section" id="section">
+            <option value="">Choose an Option</option>
+            <option value="products_reports">Products Reports</option>
+            <option value="customers_reports">Customers Reports</option>
+            <option value="employees_reports">Employees Reports</option>
+        </select>
+        <span id="sectionError" class="error-message">Please select a report option</span><br>
+        <button type="submit">Submit</button>
+    </form>
+    {% endblock %}
+    
+    <script>
+      document.getElementById('indexForm').addEventListener('submit', function(e) {
+          const sectionSelect = document.getElementById('section');
+          const sectionError = document.getElementById('sectionError');
+          
+          if (!sectionSelect.value) {
+              e.preventDefault();
+              sectionError.style.display = 'inline';
+          } else {
+              sectionError.style.display = 'none';
+          }
+      });
+      
+      document.getElementById('section').addEventListener('change', function() {
+          document.getElementById('sectionError').style.display = 'none';
+      });
+    </script>
+</body>
+
+</html>

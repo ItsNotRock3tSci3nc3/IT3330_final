@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Products Reports</h1>
+
+<form method="GET" action="{{ url_for('products_reports') }}" id="productsForm">
+    <label for="report">Choose Product Report Option:</label><br>
+    <select name="report" id="report">
+        <option value="">Choose an Option</option>
+        <option value="monthlyOrderTotals" {% if report == 'monthlyOrderTotals' %}selected{% endif %}>View Monthly Order Totals</option>
+        <option value="orderLineTotals" {% if report == 'orderLineTotals' %}selected{% endif %}>View Order Line Totals</option>
+        <option value="productOrderTotals" {% if report == 'productOrderTotals' %}selected{% endif %}>View Order Totals by Product</option>
+    </select>
+    <span id="reportError" class="error-message">Please select a report option</span>
+    
+    <select name="year" id="year">
+        <option value="">Choose a Year</option>
+        {% for year in years %}
+        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select><br>
+    
+    <button type="submit">Submit</button>
+</form>
+
+{% if chart %}
+<div class="chart-container">
+    <embed type="image/svg+xml" src="{{ chart|safe }}" style="width:100%" />
+</div>
+{% endif %}
+
+{% if rows %}
+<table>
+    <thead>
+        <tr>
+            {% for column in rows[0].keys() %}
+            <th>{{ column|title }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            {% for value in row.values() %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<script>
+document.getElementById('productsForm').addEventListener('submit', function(e) {
+    const reportSelect = document.getElementById('report');
+    const reportError = document.getElementById('reportError');
+    
+    if (!reportSelect.value) {
+        e.preventDefault();
+        reportError.style.display = 'inline';
+    } else {
+        reportError.style.display = 'none';
+    }
+});
+
+document.getElementById('report').addEventListener('change', function() {
+    document.getElementById('reportError').style.display = 'none';
+});
+</script>
+{% endblock %}
+
+

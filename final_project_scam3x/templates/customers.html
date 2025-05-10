@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Customers Reports</h1>
+
+<form method="GET" action="{{ url_for('customers_reports') }}" id="customersForm">
+    <label for="report">Choose Customer Report Option:</label><br>
+    <select name="report" id="report">
+        <option value="">Choose a Report</option>
+        <option value="customerOrderTotals" {% if report == 'customerOrderTotals' %}selected{% endif %}>Customer Order Totals</option>
+        <option value="customerPaymentTotals" {% if report == 'customerPaymentTotals' %}selected{% endif %}>Customer Payment Totals</option>
+    </select>
+    <span id="reportError" class="error-message">Please select a report option</span>
+    
+    <select name="year" id="year">
+        <option value="">Choose a Year</option>
+        {% for year in years %}
+        <option value="{{ year }}" {% if year == selected_year %}selected{% endif %}>{{ year }}</option>
+        {% endfor %}
+    </select><br>
+    
+    <button type="submit">Submit</button>
+</form>
+
+{% if chart %}
+<div class="chart-container">
+    <embed type="image/svg+xml" src="{{ chart|safe }}" style="width:100%" />
+</div>
+{% endif %}
+
+{% if rows %}
+<table>
+    <thead>
+        <tr>
+            {% for column in rows[0].keys() %}
+            <th>{{ column|title }}</th>
+            {% endfor %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for row in rows %}
+        <tr>
+            {% for value in row.values() %}
+            <td>{{ value }}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}
+
+<script>
+document.getElementById('customersForm').addEventListener('submit', function(e) {
+    const reportSelect = document.getElementById('report');
+    const reportError = document.getElementById('reportError');
+    
+    if (!reportSelect.value) {
+        e.preventDefault();
+        reportError.style.display = 'inline';
+    } else {
+        reportError.style.display = 'none';
+    }
+});
+
+document.getElementById('report').addEventListener('change', function() {
+    document.getElementById('reportError').style.display = 'none';
+});
+</script>
+{% endblock %}
